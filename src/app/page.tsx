@@ -1,13 +1,16 @@
 "use client";
 import DropZone from "@/components/DropZone/DropZone";
+import Footer from "@/components/Footer/Footer";
+import ResetButton from "@/components/ResetButton/ResetButton";
+import Sign from "@/components/Sign/Sign";
 import { Disk } from "@/interfaces/Disk";
-import { Minus, Plus, RotateCcw } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 const MAX_DISK = 8;
-const MIN_DISK = 3;
+const MIN_DISK = 1;
 
 const minMoves = (initialDisks: number): number => {
   return 2 ** initialDisks - 1;
@@ -17,8 +20,8 @@ const checkWin = (columns: Disk[][], expectedQuantity: number) => {
   return columns[columns.length - 1].length === expectedQuantity;
 };
 
-const DragAndDropExample: React.FC = () => {
-  const [disksQuantity, setDisksQuantity] = useState<number>(3); // Default quantity is 3
+const Main: React.FC = () => {
+  const [disksQuantity, setDisksQuantity] = useState<number>(3);
 
   const createDisks = (): Disk[] => {
     const disks: Disk[] = [];
@@ -61,22 +64,35 @@ const DragAndDropExample: React.FC = () => {
         targetColumn[0].size > draggedItem.size
       ) {
         newColumns[targetColumnIndex].unshift(draggedItem);
-        setMovesCounter((prevState) => prevState + 1);
+        if (targetColumnIndex !== originalColumnIndex) {
+          setMovesCounter((prevState) => prevState + 1);
+        }
       } else {
         newColumns[originalColumnIndex].unshift(draggedItem);
       }
     }
 
     setColumns(newColumns);
-
-    if (checkWin(newColumns, disksQuantity)) {
-      alert("You won!");
-      resetStates();
-    }
   };
 
   return (
-    <main className="h-screen w-screen flex flex-col items-center justify-center p-6 bg-gradient-to-r from-slate-500 to-gray-500">
+    <main className=" moving-gradient h-screen w-screen flex flex-col items-center justify-center p-6 bg-gradient-to-r from-slate-500 to-gray-500">
+      <h1 className="text-3xl font-extrabold mb-10">Tower of Hanoi</h1>
+      <Sign
+        message={
+          <div className="p-2 flex justify-center flex-col align-middle items-center">
+            <h2 className="flex text-center my-2 font-black px-5">
+              🥳 Congratulations! 🥳
+            </h2>
+            <p className="text-center w-[50%] text-sm">
+              {movesCounter === minMoves(disksQuantity)
+                ? "You got it perfectly 🤩! Well done! 👍"
+                : "Now... can you do it in the minium amount of moves? 🤔"}
+            </p>
+          </div>
+        }
+        show={checkWin(columns, disksQuantity)}
+      />
       <DndProvider backend={HTML5Backend}>
         <div className="flex justify-around w-full max-w-4xl mt-10">
           {columns.map((items, columnIndex) => (
@@ -88,54 +104,58 @@ const DragAndDropExample: React.FC = () => {
             />
           ))}
         </div>
+
         <div className="bg-yellow-950 w-full rounded-t-full h-10"></div>
         <div className="w-full justify-between flex ">
-          <div className="flex justify-around w-full rounded-2xl ">
-            <div className="flex justify-center items-center flex-col rounded-3xl p-2">
-              <p className="text-lg px-5 font-semibold mb-4 ">Minimum Moves</p>
-              <span className="text-2xl00">{minMoves(disksQuantity)}</span>
+          <div className="flex justify-around w-full rounded-2xl mt-5">
+            <div className="flex justify-center items-center align-middle">
+              <p className="text-lg font-semibold bg-gray-800 border-gray-950 text-gray-300 p-2 border rounded-l-lg">
+                Minimum Moves
+              </p>
+              <span className="text-xl p-2 px-5 border rounded-r-lg bg-gray-700 border-gray-950">
+                {minMoves(disksQuantity)}
+              </span>
             </div>
-            <div className="flex justify-center items-center flex-col rounded-3xl p-2">
-              <p className="text-lg px-5 font-semibold mb-4">Moves</p>
-              <span className="text-2xl">{movesCounter}</span>
+            <div className="flex justify-center items-center align-middle">
+              <p className="text-lg font-semibold bg-gray-800 border-gray-950 text-gray-300 p-2 border rounded-l-lg">
+                Moves
+              </p>
+              <span className="text-xl p-2 px-5 border rounded-r-lg bg-gray-700 border-gray-950">
+                {movesCounter}
+              </span>
             </div>
           </div>
         </div>
         <div className="flex items-center mb-8 flex-col">
-          <button
-            onClick={() => resetStates()}
-            className="flex align-middle items-center border rounded-xl p-2 mb-5"
-          >
-            Reset
-            <RotateCcw className="ml-2" />
-          </button>
+          <ResetButton onClick={resetStates} />
           <div className="flex items-center align-middle">
             <button
               onClick={() =>
                 disksQuantity - 1 >= MIN_DISK &&
                 setDisksQuantity(disksQuantity - 1)
               }
-              className="bg-red-500 text-white rounded-full rounded-r-none p-2 hover:bg-red-700"
+              className="bg-red-500 border-2 border-slate-950 text-white rounded-full rounded-r-none p-2 duration-150 hover:bg-red-700"
             >
               <Minus />
             </button>
-            <div className="px-5 border-2 border-">
-              <p className="text-3xl">{disksQuantity}</p>
+            <div className="px-5 border-2 border-slate-950 bg-slate-700 border-x-0">
+              <p className="text-3xl px-3">{disksQuantity}</p>
             </div>
             <button
               onClick={() =>
                 disksQuantity + 1 <= MAX_DISK &&
                 setDisksQuantity(disksQuantity + 1)
               }
-              className="bg-green-500 text-white rounded-full rounded-l-none p-2 hover:bg-green-700"
+              className="bg-green-500 border-2 border-slate-950 text-white rounded-full rounded-l-none p-2 duration-150 hover:bg-green-700"
             >
               <Plus />
             </button>
           </div>
         </div>
       </DndProvider>
+      <Footer />
     </main>
   );
 };
 
-export default DragAndDropExample;
+export default Main;

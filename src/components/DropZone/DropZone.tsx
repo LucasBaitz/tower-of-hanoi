@@ -32,7 +32,7 @@ const DropZone: React.FC<DropZoneProps> = ({
       }}
     >
       {items.length === 0 ? "" : null}
-      <span className="h-full border-[5px] border-[#d5b07c] rounded-full rounded-b-none"></span>
+      <span className="h-full p-1 border-2 border-black border-b-0 outline-1 outline-black bg-[#d5b07c] rounded-full rounded-b-none"></span>
       {items.map((item, index) => (
         <DraggableDisk
           key={item.id}
@@ -42,7 +42,7 @@ const DropZone: React.FC<DropZoneProps> = ({
           isTopItem={index === 0}
         />
       ))}
-      <span className="w-full border-2 border-[#d5b07c] rounded-full min-h-5 custom-background"></span>
+      <span className="w-full border-2 border-black rounded-full min-h-5 column-base-bg"></span>
     </div>
   );
 };
