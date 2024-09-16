@@ -86,8 +86,8 @@ const Main: React.FC = () => {
             </h2>
             <p className="text-center w-[50%] text-sm">
               {movesCounter === minMoves(disksQuantity)
-                ? "You got it perfectly 🤩! Well done! 👍"
-                : "Now... can you do it in the minium amount of moves? 🤔"}
+                ? "You got it perfectly! 🤩 Well done! 👍"
+                : "Now... can you do it in the minimum amount of moves? 🤔"}
             </p>
           </div>
         }
